@@ -1,0 +1,69 @@
+.font-default {
+  font:inherit;
+  color:inherit;
+}
+html, body {
+  width:100%;
+  height:100%;
+}
+body, h1, h2, h3, h4, h5, h6, i, b, em, strong, button, input, textarea, caption, th, var, pre, code {
+  .font-default;
+}
+body, h1, h2, h3, h4, h5, h6, p, blockquote, ol, ul, pre, input, select, textarea, dl, dd {
+  margin:0;
+}
+ol, ul, input, button, textarea {
+  padding:0;
+}
+ol, ul {
+  list-style:none;
+}
+p, div, span {
+  word-wrap:break-word;
+}
+img {
+  border:none;
+  vertical-align:bottom;
+}
+input, button, textarea, a {
+  .font-default;
+  cursor:default;
+}
+input, button, textarea {
+  border:none;
+  background-color:transparent;
+}
+//css4 草案标准 谷歌浏览器开启实验性属性有效
+:focus:not(:focus-visible) {
+  outline: 0;
+}
+input {
+  &::-webkit-inner-spin-button, &::-webkit-outer-spin-button, &::-webkit-search-cancel-button {
+    -webkit-appearance:none;
+  }
+}
+textarea {
+  resize:none;
+}
+a {
+  text-decoration:none;
+  &:link, &:hover, &:visited, &:active {
+    color:inherit;
+  }
+}
+table {
+  border-collapse:collapse;
+  border-spacing:0;
+}
+caption, th {
+  text-align:left;
+}
+q:before, q:after {
+  content:''
+}
+sup {
+  vertical-align:text-top;
+}
+sub {
+  vertical-align:text-bottom;
+}
