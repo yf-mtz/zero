@@ -4,11 +4,11 @@ let getEntry = () => {
 	let pages = {}
 	if (process.env.NODE_ENV === 'production') {
 		pages[projectName] = {
-				entry: `src/modules/${projectName}/main.js`,
-				template: `src/modules/${projectName}/${projectName}.html`,
-				filename: `${projectName}.html`,
-				title: projectName,
-				chunks: ['chunk-vendors', 'chunk-common', projectName]
+			entry: `src/modules/${projectName}/main.js`,
+			template: `src/modules/${projectName}/${projectName}.html`,
+			filename: `${projectName}.html`,
+			title: projectName,
+			chunks: ['chunk-vendors', 'chunk-common', projectName]
 		}
 	}
 	else {
@@ -28,8 +28,8 @@ let getEntry = () => {
 	}
 	return pages
 }
-
 const pagesConfig = getEntry()
+
 module.exports = {
 	publicPath: process.env.NODE_ENV === 'production' ? '' : '/',
 	devServer: {
