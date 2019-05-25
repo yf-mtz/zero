@@ -1,10 +1,28 @@
 const glob = require('glob')
-const child_process = require('child_process')
 const fs = require('fs')
-const path = require('path')
+const child_process = require('child_process')
 const exec = child_process.exec
-const module_name = process.argv[2]
+const moduleName = process.argv[2]
 const stat = fs.stat
+/**
+ * 打包执行的信息打印
+ * @param name  模块名字
+ * @param start 是否为开始阶段 布尔值
+ */
+let buildLog = (name, start) => {
+	if (start) {
+		start = '开始打包'
+		console.log(' ---------------------------------')
+		console.log(`|        ${name}--${start}          |`)
+		console.log(' ---------------------------------')
+	}
+	else {
+		start = '打包完成'
+		console.log(' ..................................')
+		console.log(` .        ${name}--${start}         .`)
+		console.log(' ..................................')
+	}
+}
 /**
  * 子项目public文件夹复制
  * @param name 子项目名称
@@ -13,126 +31,95 @@ let copyPublic = (name) => {
 	let copy = (src, dst) => {
 		//读取文件
 		fs.readdir(src, (err, paths) => {
-			if (err) {
-				throw err
-			}
+			if (err) {throw err}
 			paths.forEach((path) => {
+				// 读取文件路径和写入文件路径
 				let _src = `${src}/${path}`
 				let _dst = `${dst}/${path}`
-				stat(_src,  (err, st)=> {
-					if (err) {
-						throw err
-					}
-					if (st.isFile()) {
+				/**
+				 * @param _src 读取文件路径
+				 * @param err  错误信息
+				 * @param stats 子文件信息
+				 */
+				stat(_src, (err, stats) => {
+					if (err) {throw err}
+					if (stats.isFile()) {// 是文件的情况
 						let readable = fs.createReadStream(_src)//创建读取流
 						let writable = fs.createWriteStream(_dst)//创建写入流
 						readable.pipe(writable)
 					}
-					else if (st.isDirectory()) {
-						exists(_src, _dst, copy)
-					}
+					else if (stats.isDirectory()) {exists(_src, _dst, copy)}// 是文件夹的情况
 				})
 			})
 		})
 	}
 	/**
-	 *
+	 * exists判断目标文件夹的文件是否存在
 	 * @param src 子项目public文件夹
-	 * @param dst dist之后的子项目文件夹
-	 * @param callback 调用写入函数
+	 * @param dst dist目标文件夹
+	 * @param callback 传入copy函数
 	 */
 	let exists = (src, dst, callback) => {
-		//测试某个路径下文件是否存在 不存在创建文件
+		//测试路径下文件是否存在 不存在创建文件
 		fs.exists(dst, (exists) => {
-			if (exists) {
-				callback(src, dst)
-			}
-			else {
-				fs.mkdir(dst, () => {
-					callback(src, dst)
-				})
-			}
+			if (exists) {callback(src, dst)}
+			else {fs.mkdir(dst, () => {callback(src, dst)})}
 		})
 	}
 	exists(`./src/modules/${name}/public`, `./dist/${name}/`, copy)
-	console.log(`${name}--public文件拷贝完成`)
+	console.log(' ..................................')
+	console.log(` .   ${name}--public文件拷贝完成    .`)
+	console.log(' ..................................')
 }
 /**
- * 打包写入favicon.icon图标
- * @param name 传入模块名称
+ * build执行函数
+ * @param moduleName 子项目名称
  */
-let copyFavicon = (name) => {
-	const fileName = 'favicon.ico'
-	let sourceFile = path.join(__dirname, `../src/modules/${name}`, fileName)
-	let destinationPath = path.join(__dirname, `../dist/${name}`, fileName)
-	let readIcon = fs.createReadStream(sourceFile)
-	let writeIcon = fs.createWriteStream(destinationPath)
-	readIcon.pipe(writeIcon)
-	console.log(`${name}--favicon.ico拷贝完成`)
-}
-
-let buildLog = (name, state) => {
-	state ? state = '开始打包' : state = '打包完成'
-	if (state === '开始打包') {
-		console.log(' ---------------------------------')
-		console.log(`|                                 |`)
-		console.log(`|          ${name}--${state}        |`)
-		console.log(`|                                 |`)
-		console.log(' ---------------------------------')
+let buildModule = (moduleName) => {
+	if (moduleName === 'all') {//错误命令提示
+		throw  new Error('build全部modules项目请使用 npm run build @all')
 	}
-	else {
-		console.log(' ..................................')
-		console.log(' .                                .')
-		console.log(` .          ${name}--${state}       .`)
-		console.log(' .                                .')
-		console.log(' ..................................')
-	}
-}
-
-let buildFun = (name) => {
-	if (name !== 'all') {
-		buildLog(name, true)
-		let e = exec(`vue-cli-service build ${name}`, (err) => {
+	else if (moduleName !== '@all') {//单个modules打包
+		buildLog(moduleName, true)
+		exec(`vue-cli-service build ${moduleName}`, (err) => {
 			if (err) console.log(err)
-		})
-		e.stdout.on('end', () => {
-			buildLog(name)
-			copyPublic(name)
-			copyFavicon(name)
+		}).stdout.on('data', data => console.log(data)).on('end', () => {
+			buildLog(moduleName)
+			copyPublic(moduleName)
 		})
 	}
-	else if (name === 'all') {
+	else if (moduleName === '@all') {//全部modules打包
 		/**
-		 * getHtmlList 获取所有项目的html文件名称 返回名称数组
-		 * @returns {Array}
+		 * getModuleNameList 获取所有项目的html文件名称 返回名称数组
+		 * @returns {Array} 返回moduleNameList数组
 		 */
-		let getHtmlList = () => {
+		let getModuleNameList = () => {
 			let htmlPathList = glob.sync('./src/modules/*/*.html')
-			let htmlList = []
+			let moduleNameList = []
 			for (let i in htmlPathList) {
 				let filePath = htmlPathList[i]
 				let fileList = filePath.split('/')
 				let fileName = fileList[fileList.length - 2]
-				htmlList.push(fileName)
+				moduleNameList.push(fileName)
 			}
-			return htmlList
+			return moduleNameList
 		}
 		/**
-		 * 遍历执行打包动作 打包所有项目
+		 * buildAllModules 遍历打包全部module
+		 * @param moduleNameList
 		 */
-		((res => {
-			res.forEach((name) => {
-				buildLog(name, true)
-				let e = exec(`npm run build ${name}`, (err) => {
+		let buildAllModules = (moduleNameList) => {
+			moduleNameList.forEach((moduleName) => {
+				buildLog(moduleName, true)
+				exec(`npm run build ${moduleName}`, (err) => {
 					if (err) console.log(err)
-				})
-				e.stdout.on('end', () => {
-					buildLog(name)
-					copyPublic(name)
-					copyFavicon(name)
+				}).stdout.on('end', () => {
+					buildLog(moduleName)
+					copyPublic(moduleName)
 				})
 			})
-		})(getHtmlList()))
+		}
+		buildAllModules(getModuleNameList())
 	}
 }
-buildFun(module_name)
+buildModule(moduleName)

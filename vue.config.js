@@ -7,7 +7,6 @@ let getEntry = () => {
 			entry: `src/modules/${projectName}/main.js`,
 			template: `src/modules/${projectName}/${projectName}.html`,
 			filename: `${projectName}.html`,
-			title: projectName,
 			chunks: ['chunk-vendors', 'chunk-common', projectName]
 		}
 	}
@@ -21,7 +20,6 @@ let getEntry = () => {
 				entry: `src/modules/${fileName}/main.js`,
 				template: `src/modules/${fileName}/${fileName}.html`,
 				filename: `${fileName}.html`,
-				title: fileName,
 				chunks: ['chunk-vendors', 'chunk-common', fileName]
 			}
 		}

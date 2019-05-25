@@ -6,11 +6,15 @@
     "serve": "vue-cli-service serve",
     "build": "node buildtools/build.js",
     "test:e2e": "vue-cli-service test:e2e",
-    "test:unit": "vue-cli-service test:unit"
+    "test:unit": "vue-cli-service test:unit",
+    "test1": "node buildtools/test.js"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "core-js": "^2.6.5",
+    "glob": "latest",
     "vue": "^2.6.10",
+    "vue-axios": "^2.1.4",
     "vue-router": "^3.0.3",
     "vuex": "^3.0.1"
   },
