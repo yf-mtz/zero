@@ -17,7 +17,7 @@ let buildLog = (moduleName, isStart) => {
 	}
 	else {
 		console.log(` .................................
-:        ${moduleName}--打包完成          :
+.        ${moduleName}--打包完成          .
  .................................`)
 	}
 }
@@ -34,12 +34,16 @@ let copyPublic = (moduleName) => {
 				// 读取文件路径和写入文件路径
 				let _src = `${src}/${path}`
 				let _dst = `${dst}/${path}`
+				// 检测是否是html正则的文件 如果是 不复制
+				let reg = new RegExp(`${moduleName}.html`)
 				stat(_src, (err, stats) => {
 					if (err) {throw err}
 					if (stats.isFile()) {// 是文件的情况
-						let readable = fs.createReadStream(_src) //创建读取流
-						let writable = fs.createWriteStream(_dst) //创建写入流
-						readable.pipe(writable)
+						if (!reg.test(path)) {
+							let readable = fs.createReadStream(_src) //创建读取流
+							let writable = fs.createWriteStream(_dst) //创建写入流
+							readable.pipe(writable)
+						}
 					}
 					else if (stats.isDirectory()) {exists(_src, _dst, copy)}// 是文件夹的情况
 				})
@@ -54,40 +58,46 @@ let copyPublic = (moduleName) => {
 	 */
 	let exists = ((src, dst, callback) => {
 		//检测路径下文件是否存在 不存在创建文件
-		fs.exists(dst, (exists) => {exists ? callback(src, dst) : fs.mkdir(dst, () => {callback(src, dst)})})
-	})(`./src/modules/${moduleName}/public`, `./dist/${moduleName}/`, copy)
+		fs.exists(dst, (exists) => {
+			exists ? callback(src, dst) : fs.mkdir(dst, () => {callback(src, dst)})
+		})
+	})
+	exists(`./src/modules/${moduleName}/public`, `./dist/${moduleName}/`, copy)
 	buildLog(moduleName, false)
 }
 /**
- * 打包函数
+ * 获取子项目名称
+ */
+let moduleNameList = (() => {
+	let htmlPathList = glob.sync('./src/modules/*/public/*.html')
+	let moduleNameArray = []
+	for (let i in htmlPathList) {
+		let filePath = htmlPathList[i]
+		let fileList = filePath.split('/')
+		let fileName = fileList[fileList.length - 3]
+		moduleNameArray.push(fileName)
+	}
+	return moduleNameArray
+})()
+/**
+ * 打包函数 build
  * @param moduleName 子项目名称
  */
-((moduleName) => {
-	if (moduleName === 'all') {//错误命令提示
-		throw  new Error('build全部modules项目请使用 npm run build @all')
-	}
-	else if (moduleName !== '@all') {//单个modules打包
+let build = (moduleName) => {
+	if (moduleName !== '@all') {//单个modules打包
+		if (moduleNameList.indexOf(moduleName) === -1) {//判断参数名称是否存在于子项目中
+			throw new Error('项目不存在')
+		}
 		buildLog(moduleName, true)
-		exec(`vue-cli-service build ${moduleName}`, (err) => {
-			if (err) console.log(err)
-		}).stdout.on('data', data => console.log(data)).on('end', () => {
-			copyPublic(moduleName)
-		})
+		exec(`vue-cli-service build ${moduleName}`, (err) => {if (err) console.log(err)})
+				.stdout.on('data', data => console.log(data))
+				.on('end', () => copyPublic(moduleName))
 	}
 	else if (moduleName === '@all') {//全部modules打包
-		(() => {
-			let htmlPathList = glob.sync('./src/modules/*/public/*.html')
-			let moduleNameList = []
-			for (let i in htmlPathList) {
-				let filePath = htmlPathList[i]
-				let fileList = filePath.split('/')
-				let fileName = fileList[fileList.length - 3]
-				moduleNameList.push(fileName)
-			}
-			moduleNameList.forEach((moduleName) => {
-				buildLog(moduleName, true)
-				exec(`npm run build ${moduleName}`, (err) => {if (err) console.log(err)}).stdout.on('end', () => {copyPublic(moduleName)})
-			})
-		})()
+		moduleNameList.forEach((moduleName) => {
+			exec(`npm run build ${moduleName}`, (err) => {if (err) console.log(err)})
+					.stdout.on('end', () => {copyPublic(moduleName)})
+		})
 	}
-})(moduleName)
+}
+build(moduleName)

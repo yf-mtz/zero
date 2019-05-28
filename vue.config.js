@@ -2,7 +2,7 @@ const projectName = process.argv[3]
 const glob = require('glob')
 // 获取serve运行时候的项目名字
 const serveParameter = JSON.parse(process.env.npm_config_argv).cooked[2]
-// 判断是否有参数 有截取开头所有 - 符号 没有默认为index
+// 判断是否有参数 有截取开头所有 - 符号 没有参数的情况下默认为index
 const serveModuleName = serveParameter ? serveParameter.replace(/^-+/g, '') : 'index'
 // 获取项目多页面配置
 let getPagesConfig = () => {
@@ -30,6 +30,7 @@ let getPagesConfig = () => {
 		}
 	}
 	return pages
+
 }
 const pagesConfig = getPagesConfig()
 

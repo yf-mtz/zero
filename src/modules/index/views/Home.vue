@@ -19,15 +19,11 @@
 </template>
 
 <script>
-	// @ is an alias to /src
 	import {modulesConfig} from '../assets/getModulesConfig'
-	import HelloWorld from '../components/HelloWorld.vue'
 
 	export default {
 		name: 'home',
-		components: {
-			HelloWorld
-		},
+		components: {},
 		data () {
 			return {
 				modulesConfig
