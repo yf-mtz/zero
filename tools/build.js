@@ -84,19 +84,22 @@ let moduleNameList = (() => {
  * @param moduleName 子项目名称
  */
 let build = (moduleName) => {
-	if (moduleName !== '@all') {//单个modules打包
-		if (moduleNameList.indexOf(moduleName) === -1) {//判断参数名称是否存在于子项目中
+	if (!moduleName) { // 无参数的时候抛出错误
+		throw new Error('build命令必须输入参数')
+	}
+	else if (moduleName !== '@all' && moduleName !== undefined) {// 单个modules打包
+		if (moduleNameList.indexOf(moduleName) === -1) {// 判断参数名称是否存在于子项目中
 			throw new Error('项目不存在')
 		}
-		buildLog(moduleName, true)
 		exec(`vue-cli-service build ${moduleName}`, (err) => {if (err) console.log(err)})
 				.stdout.on('data', data => console.log(data))
 				.on('end', () => copyPublic(moduleName))
 	}
-	else if (moduleName === '@all') {//全部modules打包
-		moduleNameList.forEach((moduleName) => {
-			exec(`npm run build ${moduleName}`, (err) => {if (err) console.log(err)})
-					.stdout.on('end', () => {copyPublic(moduleName)})
+	else if (moduleName === '@all') {// 全部modules打包
+		moduleNameList.forEach((item) => {
+			buildLog(item, true)
+			exec(`npm run build ${item}`, (err) => {if (err) console.log(err)})
+					.stdout.on('end', () => {buildLog(item, false)})
 		})
 	}
 }
