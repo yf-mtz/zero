@@ -7,15 +7,15 @@ const stat = fs.stat
 /**
  * 打包执行的信息打印
  * @param moduleName  模块名字
- * @param isStart 是否为开始阶段 布尔值
+ * @param state 状态
  */
-let buildLog = (moduleName, isStart) => {
-	if (isStart) {
+let buildLog = (moduleName, state) => {
+	if (state === 'start') {
 		console.log(` ---------------------------------
 |        ${moduleName}--开始打包          |
  ---------------------------------`)
 	}
-	else {
+	else if (state === 'succeed') {
 		console.log(` .................................
 .        ${moduleName}--打包完成          .
  .................................`)
@@ -97,9 +97,9 @@ let build = (moduleName) => {
 	}
 	else if (moduleName === '@all') {// 全部modules打包
 		moduleNameList.forEach((item) => {
-			buildLog(item, true)
+			buildLog(item, 'start')
 			exec(`npm run build ${item}`, (err) => {if (err) console.log(err)})
-					.stdout.on('end', () => {buildLog(item, false)})
+					.stdout.on('end', () => {buildLog(item, 'succeed')})
 		})
 	}
 }
