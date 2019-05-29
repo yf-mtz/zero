@@ -1,5 +1,9 @@
 const glob = require('glob')
 const modulesSrcList = glob.sync('./src/modules/*/main.js')// 获取所有子项目入口路径
+const path = require('path');
+function resolve (dir) {
+	return path.join(__dirname, dir)
+}
 const serveParameter = JSON.parse(process.env.npm_config_argv).cooked[2]// 获取serve运行时候的--参数
 const serveModuleName = serveParameter ? serveParameter.replace(/^-+/g, '') : 'index'// 判断是否有参数 有截取开头所有 - 符号 没有参数的情况下默认为index
 const moduleNameList = (() => {// 获取所有项目名称列表
@@ -18,7 +22,7 @@ const pagesConfig = (() => {// 获取项目多页面配置
 	if (process.env.NODE_ENV === 'production') { // 打包单独生成每个文件夹的html入口
 		pages[serveModuleName] = {
 			entry: `src/modules/${serveModuleName}/main.js`,
-			template: `src/modules/${serveModuleName}/public/${serveModuleName}.html`,
+			template: `src/modules/${serveModuleName}/${serveModuleName}.html`,
 			filename: `${serveModuleName}.html`,
 			chunks: ['chunk-vendors', 'chunk-common', serveModuleName]
 		}
@@ -28,7 +32,7 @@ const pagesConfig = (() => {// 获取项目多页面配置
 				(fileName) => {
 					pages[fileName] = {
 						entry: `src/modules/${fileName}/main.js`,
-						template: `src/modules/${fileName}/public/${fileName}.html`,
+						template: `src/modules/${fileName}/${fileName}.html`,
 						filename: `${fileName}.html`,
 						chunks: ['chunk-vendors', 'chunk-common', fileName]
 					}
@@ -47,13 +51,9 @@ module.exports = {
 		open: true,
 		index: `${serveModuleName}.html`,
 	},
-	configureWebpack: {
-		resolve: {
-			alias: {
-				'#': './public',
-				'@@':'../assets',
-			},
-		}
+	chainWebpack: (config)=>{
+		config.resolve.alias
+				.set('@@', resolve('src/modules/*/assets'))
 	},
 	productionSourceMap: false, // 生产环境map映射 默认true压缩打包后的文件为一行格式
 	outputDir: `dist/${serveModuleName}`,

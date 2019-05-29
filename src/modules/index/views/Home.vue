@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <img :src="require('@@/images/news-bg.png')" alt="">
+    <img src="../assets/images/news-bg.png" alt="">
     <ul class="module-list">
       <li class="module-item"
           v-for="(module,index) in modulesConfig"
@@ -36,12 +36,12 @@
 		},
 		methods: {
 			getModulesStyle () {
-				this.modulesConfig.map((item, index, array) => {
+				this.modulesConfig.map((item) => {
 					let newStyle = {}
 					newStyle.backgroundColor = item.style.backgroundColor || '#8b8b8b'
 					newStyle.backgroundImage = `url(${item.style.backgroundImage})` || ''
 					newStyle.color = item.style.color || '#ffffff'
-					array[index].style = newStyle
+					item.style = newStyle
 				})
 			}
 		}
