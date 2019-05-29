@@ -2,7 +2,7 @@
 
 ### 简介
 
-每个module可以独立打包,有独立的public文件夹,index项目为读取全部项目config.json配置的导航展示项目,tools/build.js为拦截打包命令的工具,vue.config.js里进行了serve命令的参数拦截
+modules中的每个子项目可以独立打包,index项目为读取全部项目config.json配置的导航展示项目,tools/build.js为拦截打包命令的工具,vue.config.js里进行了serve命令的参数拦截
     
 ### 命令
 
