@@ -4,7 +4,7 @@ const serveParameter = JSON.parse(process.env.npm_config_argv).cooked[2]// 获�
 const serveModuleName = serveParameter ? serveParameter.replace(/^-+/g, '') : 'index'// 判断是否有参数 有截取开头所有 - 符号 没有参数的情况下默认为index
 const moduleNameList = (() => {// 获取所有项目名称列表
 	let list = []
-	modulesSrcList.map((src) => list.push((src.split('/'))[3]))
+	modulesSrcList.map((src) => list.push(src.split('/')[3]))
 	return list
 })()
 
@@ -38,7 +38,7 @@ const pagesConfig = (() => {// 获取项目多页面配置
 	return pages
 })()
 module.exports = {
-	publicPath: process.env.NODE_ENV === 'production' ? '' : '/',
+	publicPath: process.env.NODE_ENV === 'production' ? '' : `/`,
 	devServer: {
 		port: 8080,
 		host: 'localhost',
@@ -46,15 +46,13 @@ module.exports = {
 		hot: true,
 		open: true,
 		index: `${serveModuleName}.html`,
-		before: (app) => {
-			console.log(321)
-		}
 	},
 	configureWebpack: {
 		resolve: {
 			alias: {
-				'#': './public'
-			}
+				'#': './public',
+				'@@':'../assets',
+			},
 		}
 	},
 	productionSourceMap: false, // 生产环境map映射 默认true压缩打包后的文件为一行格式

@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <img :src="require('../assets/images/news-bg.png')" alt="">
+    <img :src="require('@@/images/news-bg.png')" alt="">
     <ul class="module-list">
       <li class="module-item"
           v-for="(module,index) in modulesConfig"
@@ -27,7 +27,7 @@
 		components: {},
 		data () {
 			return {
-				modulesConfig
+				modulesConfig,
 			}
 		},
 		computed: {},
