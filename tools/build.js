@@ -34,7 +34,6 @@ let moduleNameList = (() => {
 		let fileName = fileList[fileList.length - 2]
 		moduleNameArray.push(fileName)
 	}
-	console.log(moduleNameArray)
 	return moduleNameArray
 })()
 
