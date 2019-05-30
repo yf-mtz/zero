@@ -2,18 +2,24 @@
 
 ### 简介
 
-modules中的每个子项目可以独立打包,index项目为读取全部项目config.json配置的导航展示项目,tools/build.js为拦截打包命令的工具,vue.config.js里进行了serve命令的参数拦截
+modules中的每个子项目可以独立打包,public文件夹独立  
+(在index项目运行时,跳转到其他子项目时,其他子项目的public路径无法使用) 
+ 
+index项目为读取全部项目config.json配置的导航展示项目,全部项目打包后可以通过index项目进入  
+tools/build.js为拦截打包命令的工具,vue.config.js里进行了serve命令的参数拦截
     
 ### 命令
 
 npm install 安装依赖
 
-npm run serve 运行项目 可选参数  --子项目模块名称(例:--test1)直接进入子项目启动,无参数默认启动index项目
+npm run serve 运行项目 可选参数  --子项目模块名称(例:--test1)直接进入子项目启动,无参数默认启动index项目;  
 
-npm run build 打包项目 参数必须  --子项目模块名称(例:--test2)打包对应的子项目, 输入--@all打包全部项目
+除index项目为运行全部子项目 其他子项目运行只启动子项目本身;
+
+npm run build 打包项目 参数必须  --子项目模块名称(例:--test2)打包对应的子项目, 输入--@all打包全部项目;
 
 ### config.json文件配置
-
+> 只有配置了config.json的项目才可以被index读取
 - moduleName: 项目名称 
 - author: 作者- 
 - logo: 项目logo(显示为圆形)
