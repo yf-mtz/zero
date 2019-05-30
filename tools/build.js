@@ -23,20 +23,6 @@ let buildLog = (moduleName, state) => {
 	}
 }
 /**
- * 打包写入favicon.icon图标
- * @param parameter 传入模块名称
- * @param callback buildLog函数
- */
-let writeFavicon = (parameter, callback) => {
-	const fileName = 'favicon.ico'
-	let sourceFile = path.join(__dirname, `../src/modules/${parameter}`, fileName)
-	let destinationPath = path.join(__dirname, `../dist/${parameter}`, fileName)
-	let readIcon = fs.createReadStream(sourceFile)
-	let writeIcon = fs.createWriteStream(destinationPath)
-	readIcon.pipe(writeIcon)
-	callback(moduleName, 'succeed')
-}
-/**
  * 获取子项目名称
  */
 let moduleNameList = (() => {
@@ -48,6 +34,7 @@ let moduleNameList = (() => {
 		let fileName = fileList[fileList.length - 2]
 		moduleNameArray.push(fileName)
 	}
+	console.log(moduleNameArray)
 	return moduleNameArray
 })()
 
@@ -65,7 +52,7 @@ let build = (moduleName) => {
 			exec(`vue-cli-service build ${moduleName}`, (err) => {if (err) console.log(err)})
 					.stdout.on('data', data => console.log(data))
 					.on('end', () => {
-						writeFavicon(moduleName, buildLog)
+						buildLog(moduleName, 'succeed')
 					})
 		}
 	}

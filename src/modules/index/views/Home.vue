@@ -1,13 +1,14 @@
 <template>
   <div class="home">
     <img src="../assets/images/news-bg.png" alt="">
+    <img src="images/info3.png" alt="">
     <ul class="module-list">
       <li class="module-item"
           v-for="(module,index) in modulesConfig"
           :key="index"
           :style="modulesConfig[index].style">
         <a class="module-href"
-           :href="`../${module.moduleName}/${module.moduleName}.html`">
+           :href="`${path}${module.moduleName}/${module.moduleName}.html`">
           <img class="module-logo"
                :src="module.logo">
           <h2 class="module-title">{{module.title}}</h2>
@@ -28,13 +29,16 @@
 		data () {
 			return {
 				modulesConfig,
+				path:''
 			}
 		},
 		computed: {},
 		created () {
 			this.getModulesStyle()
+      this.path = process.env.NODE_ENV === 'production'?'../':'../../'
 		},
 		methods: {
+
 			getModulesStyle () {
 				this.modulesConfig.map((item) => {
 					let newStyle = {}

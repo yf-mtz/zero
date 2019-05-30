@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <img :src="require('./assets/images/info2.png')" alt="" style="width:100px;height:100px">
+    <img src="sh.png" alt="" style="width:100px;height:100px">
     <div id="nav">
       <router-link to="/">Home</router-link>|
       <router-link to="/about">About</router-link>
