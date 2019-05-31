@@ -9,12 +9,12 @@ let config = moduleName => { // page的基本配置
 				chunks: ['chunk-vendors', 'chunk-common', moduleName]
 		}
 }
-let pagesConfig = (() => {// 获取项目多页面配置
-		let pages = {}
+let pageConfig = (() => {// 获取项目多页面配置
+		let page = {}
 		process.env.NODE_ENV === 'production' || `${moduleName}` !== 'index'
-				? pages[moduleName] = config(moduleName) // 非index项目运行配置单页面模式
-				: moduleNameList.map(moduleName => pages[moduleName] = config(moduleName))// index项目运行或打包时配置为多页面
-		return pages
+				? page[moduleName] = config(moduleName) // 非index项目运行配置单页面模式
+				: moduleNameList.map(moduleName => page[moduleName] = config(moduleName))// index项目运行或打包时配置为多页面
+		return page
 })()
 if (process.env.NODE_ENV === 'development') tools._infoLog(`${moduleName} server start`, 'start') // 开发环境下打印项目运行提示
 module.exports = {
@@ -29,7 +29,7 @@ module.exports = {
 		},
 		productionSourceMap: false, // 禁止产生map文件,调试开启
 		outputDir: `dist/${moduleName}`,
-		pages: pagesConfig,
+		pages: pageConfig,
 		chainWebpack: config => config.plugin('copy')// 覆盖copy插件的默认配置 子项目的public单独进行打包
 				.use(require('copy-webpack-plugin'), [[{
 						from: `${__dirname}/src/modules/${moduleName}/public`,
