@@ -21,8 +21,7 @@ let _infoLog = (info, state) => {
 				}
 		}
 }
-const npmParameter = JSON.parse(process.env.npm_config_argv).cooked[2]
-
+const npmParameter = JSON.parse(process.env.npm_config_argv).cooked[2] // 获取命令行--参数
 let _moduleNameList = (() => {// 获取子项目名称列表
 		let htmlPathList = glob.sync('./src/modules/*/*.html')
 		let moduleNameArray = []
