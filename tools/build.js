@@ -17,7 +17,7 @@ let moduleNameList = (() => {// 获取子项目名称
 })()
 
 /**
- * 打包函数
+ * 打包函数 build
  * @param moduleName 子项目名称
  */
 let build = (moduleName) => {
@@ -26,7 +26,7 @@ let build = (moduleName) => {
 			log.error(`${moduleName} 项目不存在`)
 		}
 		else {
-			info.log(moduleName, 'build start')
+			log.state(moduleName, 'build start')
 			exec(`vue-cli-service build ${moduleName}`, (err) => {if (err) console.log(err)})
 					.stdout.on('data', data => console.log(data))
 					.on('end', () => {
