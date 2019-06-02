@@ -45,7 +45,7 @@ let _moduleNameList = (() => {
 		return moduleNameArray
 })()
 /**
- * 获取运行参数的moduleName并进行验证是否存在于项目列表
+ * _moduleName  获取运行参数的moduleName并进行验证是否存在于项目列表
  */
 let _moduleName = (() => {
 		const npmParameter = JSON.parse(process.env.npm_config_argv).cooked[2]// 获取命令行--参数
@@ -55,7 +55,7 @@ let _moduleName = (() => {
 })()
 module.exports = {
 		_isDevelopment,
-		_stateLog,
 		_moduleNameList,
 		_moduleName,
+		_stateLog,
 }

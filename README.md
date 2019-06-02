@@ -3,10 +3,11 @@
 ### 简介
 
 modules中的每个子项目可以独立打包,public文件夹独立  
-(在index项目运行时,跳转到其他子项目时,其他子项目的public路径无法使用) 
- 
-index项目为读取全部项目config.json配置的导航展示项目,全部项目打包后可以通过index项目进入  
-tools/build.js为拦截打包命令的工具,vue.config.js里进行了serve命令的参数拦截
+>在index项目运行时,跳转到其他子项目时,其他子项目的public路径无法使用
+- index项目为读取全部项目config.json配置的导航展示项目 
+- tools/build.js 打包工具
+- tools/utils.js 通用的工具类选项和基本参数封装
+- vue.config.js  配置了多页面选项和独立copy静态public文件夹
     
 ### 命令
 

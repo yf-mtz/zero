@@ -1,10 +1,10 @@
 const exec = require('child_process').exec
-const tools = require('./tools.js')
+const tools = require('./utils.js')
 let moduleNameList = tools._moduleNameList
 let moduleName = tools._moduleName
 let stateLog = tools._stateLog
 /**
- * 打包函数 build
+ * build 项目运行打包
  * @param moduleName 子项目名称
  */
 let build = (moduleName) => {
