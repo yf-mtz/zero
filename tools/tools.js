@@ -1,55 +1,61 @@
-const glob = require('glob')
-let log = errorText => console.log('\033[41;32m ERROR: \033[47;30m', errorText, '\033[0m') // 异常信息打印
-let _errorLog = text => {throw new Error(log(text))} // 抛出异常
+const glob = require("glob")
 /**
- * 打包执行的信息打印
- * @param info 要打印的信息目标
- * @param state 状态码 字符串类型
+ * 判断是否是开发环境
+ * @type {boolean}
  */
-let _infoLog = (info, state) => {
+let _isDevelopment = process.env.NODE_ENV === "development"
+/**
+ * _errorLog 错误抛出
+ * @param errorText 抛出的错误信息内容
+ */
+let _errorLog = (errorText) => {
+		throw new Error(console.log("\033[41;32m ERROR: \033[47;30m", errorText, "\033[0m"))
+}
+/**
+ * _stateLog 打包执行的信息打印
+ * @param state 状态码 字符串类型
+ * @param info 要打印的信息目标
+ */
+let _stateLog = (state, info) => {
 		switch (state) {
-				case 'start': {
-						console.log('\033[44;30m', `${info}`, '\033[0m')
+				case "start": {
+						console.log("\033[44;30m", `${info}`, "\033[0m")
 						break
 				}
-				case 'succeed': {
-						console.log('\033[42;90m', `${info}`, '\033[0m')
+				case "succeed": {
+						console.log("\033[42;90m", `${info}`, "\033[0m")
 						break
 				}
 				default: {
-						console.log('\033[42;90m', `state参数不存在`, '\033[0m')
+						console.log("\033[42;90m", `state参数不存在`, "\033[0m")
 				}
 		}
 }
-const npmParameter = JSON.parse(process.env.npm_config_argv).cooked[2] // 获取命令行--参数
-let _moduleNameList = (() => {// 获取子项目名称列表
-		let htmlPathList = glob.sync('./src/modules/*/*.html')
+/**
+ * _moduleNameList 获取子项目名称列表
+ * @type {Array}
+ * @private
+ */
+let _moduleNameList = (() => {
+		let htmlPathList = glob.sync("./src/modules/*/*.html")
 		let moduleNameArray = []
-		for (let i in htmlPathList) {
-				let filePath = htmlPathList[i]
-				let fileList = filePath.split('/')
-				let fileName = fileList[fileList.length - 2]
-				moduleNameArray.push(fileName)
-		}
+		htmlPathList.map((fileName) => {
+				moduleNameArray.push(fileName.split("/")[3])
+		})
 		return moduleNameArray
 })()
 /**
- * 获取运行时候的moduleName并进行验证
+ * 获取运行参数的moduleName并进行验证是否存在于项目列表
  */
 let _moduleName = (() => {
-		let moduleName = npmParameter ? npmParameter.replace(/^-+/g, '') : _errorLog('请输入命令参数') // 无参数提示
-		if (_moduleNameList.indexOf(moduleName) !== -1) { // 项目存在 返回项目名称
-				return moduleName
-		}
-		else if (moduleName === '@all') { // 全部打包参数的验证和返回
-				return '@all'
-		}
-		else {
-				_errorLog(`${npmParameter} 项目不存在`) //项目不存在抛出错误
-		}
+		const npmParameter = JSON.parse(process.env.npm_config_argv).cooked[2]// 获取命令行--参数
+		let moduleName = npmParameter ? npmParameter.replace(/^-+/g, "") : _errorLog("请输入命令参数") // 无参数报错
+		if (_moduleNameList.indexOf(moduleName) !== -1 || moduleName === "@all") {return moduleName } // 项目存在或者为@all的时候返回参数字段
+		_errorLog(`${moduleName} 项目不存在`) //项目不存在抛出错误
 })()
 module.exports = {
-		_infoLog,
+		_isDevelopment,
+		_stateLog,
 		_moduleNameList,
 		_moduleName,
 }
