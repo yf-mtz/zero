@@ -1,5 +1,4 @@
-const child_process = require('child_process')
-const exec = child_process.exec
+const exec = require('child_process').exec
 const tools = require('./tools.js')
 let moduleNameList = tools._moduleNameList
 let moduleName = tools._moduleName

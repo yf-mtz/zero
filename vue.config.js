@@ -3,6 +3,7 @@ let moduleNameList = tools._moduleNameList
 let moduleName = tools._moduleName
 let stateLog = tools._stateLog
 let isDevelopment = tools._isDevelopment
+
 let pageConfig = (() => {// 获取项目多页面配置
 		let page = {}
 		let config = moduleName => { // page的基本配置
@@ -18,7 +19,9 @@ let pageConfig = (() => {// 获取项目多页面配置
 				: moduleNameList.map(itemName => page[itemName] = config(itemName))// index项目运行或打包时配置为多页面
 		return page
 })()
+
 if (isDevelopment) {stateLog("start", `${moduleName} server start`)}// 开发环境下打印项目运行提示
+
 module.exports = {
 		publicPath: isDevelopment ? `/${moduleName}/${moduleName}.html` : ``,// 修正项目运行的url为子项目路径
 		devServer: {
