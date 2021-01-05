@@ -10,7 +10,7 @@
     "test1": "node buildtools/test.js"
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "core-js": "^2.6.5",
     "glob": "latest",
     "vue": "^2.6.10",
